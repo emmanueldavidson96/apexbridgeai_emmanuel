@@ -24,6 +24,9 @@ app.use(cors({
 //Routes
 app.use("/api/v1", userRoute);
 app.use("/api/v1", articleRoute);
+app.get("/api", (req,res) => {
+    res.send("Welcome to the Backend for Apex Bridge")
+})
 
 app.listen(PORT, () => {
     connectDB()
