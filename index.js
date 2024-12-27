@@ -17,7 +17,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use(cors({
-    origin: "https://www.apexbridge.ai",
+    origin: ["https://www.apexbridge.ai", "https://www.apexbridge.ai/register"],
     credentials: true,
 }))
 
