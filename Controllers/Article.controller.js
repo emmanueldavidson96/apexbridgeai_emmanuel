@@ -1,6 +1,7 @@
 const ArticleModel = require("../Models/Article.Model");
 const cloudinary = require("../Utils/cloudinary");
 const fs = require("fs")
+const UserModel = require("../Models/User.Model")
 // Post An Article
 
 const createArticle = async (request, response) => {
@@ -16,6 +17,7 @@ const createArticle = async (request, response) => {
 
     try{
         const userId = request.userId;
+        const authorName = await UserModel.findById(userId)
         const {path} = request.file;
         //Upload the image to cloudinary
         const result = await cloudinary.uploader.upload(path);
@@ -29,7 +31,8 @@ const createArticle = async (request, response) => {
             articleDesc,
             articleImage: result.secure_url,
             cloudinary_id: result.public_id,
-            author: userId,
+            authorId: userId,
+            authorName: authorName.firstName
         })
     
         await newArticle.save();
@@ -56,7 +59,6 @@ const getAllArticles = async (request, response) => {
             message: "All articles returned",
             allArticles
         })
-        
     }
     catch(error){
         return response.status(400).json({
@@ -153,7 +155,7 @@ const userArticles = async (request, response) => {
         console.log("No user found")
     }   
     try{
-        const userArticles = await ArticleModel.find({author:userId})
+        const userArticles = await ArticleModel.find({authorId:userId})
         return response.status(200).json({
             success: true,
             message: "User Articles served",
@@ -168,11 +170,67 @@ const userArticles = async (request, response) => {
     }
 }
 
+const latestArticles = async (request,response) => {
+    try{
+        const latest_articles = await ArticleModel.find({})
+        .sort({createdAt:-1})
+        .limit(3)
+        .exec();
+
+        return response.status(200).json({
+            success: true,
+            latest_articles
+        })
+    }
+    catch(error){
+        return response.status(400).json({
+            success:false,
+            error
+        })
+    }
+}
+const recommendedArticles = async (request, response) => {
+    try{
+        const recommended_articles = await ArticleModel.aggregate([
+            {$sample: {size:3}}
+        ])
+        return response.status(200).json({
+            success: true,
+            recommended_articles
+        })
+    }
+    catch(err){
+        return response.status(400).json(err)
+    }
+}
+
+
+
+const relatedArticles = async (request, response) => {
+    try{
+        const { articleCategory } = request.body
+        const related_articles = await ArticleModel.find({articleCategory:articleCategory}).exec();
+        return response.status(200).json({
+            success: true,
+            related_articles
+        })
+    }
+    catch(error){
+        return response.status(400).json(error)
+    }
+}
+
+
+
 module.exports = {
     createArticle,
     getAllArticles,
     editArticle,
     deleteArticle,
     articleInfo,
-    userArticles
+    userArticles,    
+    latestArticles,
+    recommendedArticles,
+    relatedArticles
+    
 }

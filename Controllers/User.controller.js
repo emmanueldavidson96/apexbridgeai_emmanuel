@@ -32,7 +32,7 @@ const signUpHandler = async (request, response) => {
         // jwt token
         generateTokenAndSetCookie(response, newUser._id)
         // Send Verification Code to User Email for Verification
-        await sendVerificationEmail(newUser.email, verificationCode);
+        // await sendVerificationEmail(newUser.email, verificationCode);
         return response.status(201).json({
             success:true,
             message: "User created successfully",
