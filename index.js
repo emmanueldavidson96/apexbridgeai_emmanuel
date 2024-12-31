@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./DB/ConnectDB");
 const userRoute = require("./routes/User.route");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const articleRoute = require("./routes/Article.route");
 
@@ -12,9 +12,9 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 // Initialization of express application instance
-const app = express()
-app.use(express.json())
-app.use(cookieParser())
+const app = express();
+app.use(express.json());
+app.use(cookieParser());
 
 app.use(cors({
     origin: ["https://www.apexbridge.ai", "https://www.apexbridge.ai/register"],

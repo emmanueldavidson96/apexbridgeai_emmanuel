@@ -5,7 +5,7 @@ const upload = require("../Middlewares/multer");
 
 const articleRoute = express.Router(); 
 
-articleRoute.post("/article/add-article", verifyToken, upload.single("articleImage"), createArticle); //Done
+articleRoute.post("/articles/add-article", verifyToken, upload.single("articleImage"), createArticle); //Done
 articleRoute.get("/articles", getAllArticles); //Done
 articleRoute.put("/articles/:id", verifyToken, upload.single("articleImage"), editArticle ); //Done
 articleRoute.delete("/articles/:id", verifyToken, deleteArticle); //Done

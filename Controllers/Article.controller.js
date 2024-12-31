@@ -32,7 +32,7 @@ const createArticle = async (request, response) => {
             articleImage: result.secure_url,
             cloudinary_id: result.public_id,
             authorId: userId,
-            authorName: authorName.firstName
+            authorName: authorName.firstName + " " + authorName.lastName
         })
     
         await newArticle.save();
@@ -87,7 +87,7 @@ const  editArticle = async (request, response) => {
             articleDesc: request.body.articleDesc || article.articleDesc,
             articleImage: result?.secure_url || article.articleImage,
             cloudinary_id: result?.public_id || article.cloudinary_id,
-            author: article.author,
+            author: article.authorName,
         }
         const editedArticle = await ArticleModel.findByIdAndUpdate(request.params.id, data, {new:true});
         if(request.file){
