@@ -13,7 +13,7 @@ const articleSchema = new mongoose.Schema({
         type: String,
         required:true
     },
-    articleBodySectionOne:{
+    articleBody:{
         type:String,
         required: true,
     },
@@ -22,10 +22,6 @@ const articleSchema = new mongoose.Schema({
     },
     cloudinary_id:{
         type:String,
-    },
-    articleBodySectionTwo:{
-        type:String,
-        required:true
     },
     // articleImageInside:{
     //     type:String,

@@ -7,8 +7,7 @@ const UserModel = require("../Models/User.Model")
 const createArticle = async (request, response) => {
     const {
         articleTitle,
-        articleBodySectionOne,
-        articleBodySectionTwo,
+        articleBody,
         articleQuote,
         articleConclusion,
         articleCategory,
@@ -23,8 +22,7 @@ const createArticle = async (request, response) => {
         const result = await cloudinary.uploader.upload(path);
         const newArticle = new ArticleModel({
             articleTitle,
-            articleBodySectionOne,
-            articleBodySectionTwo,
+            articleBody,
             articleQuote,
             articleConclusion,
             articleCategory,
@@ -53,11 +51,38 @@ const createArticle = async (request, response) => {
 
 const getAllArticles = async (request, response) => {
     try{
-        const allArticles = await ArticleModel.find({}).exec()
+        let {page, limit, search} = request.query;
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 9;
+        const skip = (page - 1) * limit;
+        let searchCriteria = {}
+        if(search){
+            searchCriteria = {
+                articleTitle: {
+                    $regex: search,
+                    $options:"i"
+                }
+            }
+        }
+
+        const totalArticles = await ArticleModel.countDocuments(searchCriteria);
+        const allArticles = await ArticleModel.find(searchCriteria)
+        .skip(skip)
+        .limit(limit)
+        .sort({updateAt:-1})
+        const totalPages = Math.ceil(totalArticles/limit);
         return response.status(200).json({
             success: true,
             message: "All articles returned",
-            allArticles
+            allArticles:{
+                articles:allArticles,
+                pagination:{
+                    totalArticles,
+                    currentPage:page,
+                    totalPages,
+                    pageSize:limit
+                }
+            }
         })
     }
     catch(error){
@@ -79,8 +104,7 @@ const  editArticle = async (request, response) => {
         }
         const data = {
             articleTitle: request.body.articleTitle || article.articleTitle,
-            articleBodySectionOne: request.body.articleBodySectionOne || article.articleBodySectionOne,
-            articleBodySectionTwo: request.body.articleBodySectionTwo || article.articleBodySectionTwo,
+            articleBody: request.body.articleBody || article.articleBody,
             articleQuote: request.body.articleQuote || article.articleQuote,
             articleConclusion: request.body.articleConclusion || article.articleConclusion,
             articleCategory: request.body.articleCategory || article.articleCategory,
