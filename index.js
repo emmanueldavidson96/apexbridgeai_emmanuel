@@ -5,6 +5,8 @@ const userRoute = require("./routes/User.route");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const articleRoute = require("./routes/Article.route");
+const jobRoute = require("./routes/Job.route");
+const testimonialRoute = require("./routes/Testimonial.route");
 
 // Services
 dotenv.config();
@@ -29,6 +31,9 @@ app.use(cors({
 //Routes
 app.use("/api/v1", userRoute);
 app.use("/api/v1", articleRoute);
+app.use("/api/v1", jobRoute)
+app.use("/api/v1", testimonialRoute)
+
 app.get("/api", (req,res) => {
     res.send("Welcome to the Backend for Apex Bridge")
 })

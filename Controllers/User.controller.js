@@ -118,9 +118,61 @@ const logoutHandler = async (request, response) => {
     })
 }
 
+const getUsers = async (request, response) => {
+    try{
+        const users = await UserModel.find().exec();
+        if(!users){
+            return response.status(404).json({
+                success:false,
+                message: "Could not get any users"
+            })
+        }
+        return response.status(200).json({
+            success:true,
+            message:"Users served",
+            users
+        })
+
+    }catch(error){
+        console.log(error)
+        return response.status(400).json({
+            success:false,
+            message:"Unable to get users"
+        })
+    }
+}
+
+const getUserById = async (request, response) => {
+    const {id} = request.params;
+
+    try{
+        const user = await UserModel.findById(id).exec();
+        if(!user){
+            return response.status(404).json({
+                success:false,
+                message:"Can't find this user"
+            })
+        }
+        return response.status(200).json({
+            success:true,
+            message:"User found",
+            user
+        })
+    }
+    catch(error){
+        console.error(error);
+        return response.status(400).json({
+            success:false,
+            message:"Unable to retrieve user"
+        })
+    }
+}
+
 module.exports = {
     signUpHandler,
     loginHandler,
     logoutHandler,
-    checkAuthentiocationAndGetProfile
+    checkAuthentiocationAndGetProfile,
+    getUsers,
+    getUserById
 }
